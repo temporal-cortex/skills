@@ -87,7 +87,7 @@ for json_file in "${SKILL_DIR}"/assets/presets/*.json "${SKILL_DIR}"/.mcp.json; 
     continue
   fi
 
-  if python3 -c "import json; json.load(open('${json_file}'))" 2>/dev/null; then
+  if JSON_FILE="$json_file" python3 -c "import json, os; json.load(open(os.environ['JSON_FILE']))" 2>/dev/null; then
     pass "Valid JSON: ${json_file}"
   else
     fail "Invalid JSON: ${json_file}"

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-02-22
+
+### Security
+- Fixed shell injection vulnerability in configure.sh — user-provided timezone was
+  interpolated directly into Python code strings (reported by VirusTotal)
+- Applied same env-var-passing fix to status.sh and validate-structure.sh
+- Added input validation regex for IANA timezone format
+
+### Added
+- Security test suite (tests/test-security.sh) — validates input sanitization and
+  Python env-var isolation across all scripts
+
+### Changed
+- Expanded SKILL.md compatibility field to declare python3 and credential storage
+- Added metadata.requires declaration for automated security scanners
+
 ## [0.3.2] - 2026-02-22
 
 ### Changed
@@ -31,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - .mcp.json for local MCP server connection
 - CI pipeline: SKILL.md validation, ShellCheck, JSON validation, link check
 
-[Unreleased]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.3...HEAD
+[0.3.3]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/billylui/temporal-cortex-skill/releases/tag/v0.3.0

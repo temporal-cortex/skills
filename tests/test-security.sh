@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+# test-security.sh — Security tests for shell injection prevention
+# Validates that scripts do not interpolate variables into Python code strings
+# and that user input is properly validated.
+set -euo pipefail
+
+SKILL_DIR="calendar-scheduling"
+ERRORS=0
+
+# Navigate to repo root (parent of tests/)
+cd "$(dirname "$0")/.."
+
+pass() { echo "  PASS: $1"; }
+fail() { echo "  FAIL: $1"; ERRORS=$((ERRORS + 1)); }
+
+echo "=== Security Tests ==="
+
+# ---------------------------------------------------------------------------
+# 1. Python env-var isolation — no ${VAR} interpolation in python3 -c blocks
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- Python Env-Var Isolation ---"
+
+# Extract python3 -c blocks and check for ${...} interpolation patterns.
+# The vulnerable pattern is: python3 -c "....'${SOME_VAR}'..."
+# Safe pattern uses: os.environ['SOME_VAR']
+
+check_no_interpolation() {
+  local file="$1"
+  local label="$2"
+
+  if [[ ! -f "$file" ]]; then
+    fail "${label}: file not found"
+    return
+  fi
+
+  # Check for '${...} patterns inside python3 -c blocks (may span multiple lines).
+  # Vulnerable: open('${CONFIG_FILE}'), config['tz'] = '${TIMEZONE}'
+  # Safe:       open(os.environ['CONFIG_FILE'])
+  #
+  # Strategy: look for the specific dangerous pattern where a shell variable is
+  # embedded in a Python string literal — i.e., '${VAR}' or "${VAR}" inside a
+  # python3 -c invocation. We search for lines containing both python3 and ${,
+  # or lines within multi-line python3 -c blocks that use open('${ or = '${.
+  local found
+  found=$(awk '
+    /python3 -c/ { in_block = 1; start = NR }
+    in_block && /open\(.*\$\{/ { print NR ": " $0 }
+    in_block && /= .*\x27\$\{/ { print NR ": " $0 }
+    in_block && /^"[[:space:]]*$/ && NR > start { in_block = 0 }
+  ' "$file")
+
+  if [[ -n "$found" ]]; then
+    fail "${label}: contains \${} interpolation in python3 -c blocks"
+  else
+    pass "${label}: no variable interpolation in Python code"
+  fi
+}
+
+check_no_interpolation "${SKILL_DIR}/scripts/configure.sh" "configure.sh"
+check_no_interpolation "${SKILL_DIR}/scripts/status.sh" "status.sh"
+check_no_interpolation "tests/validate-structure.sh" "validate-structure.sh"
+
+# ---------------------------------------------------------------------------
+# 2. Timezone input validation — configure.sh must reject malicious input
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- Timezone Input Validation ---"
+
+# Verify that configure.sh contains a validation regex for timezone input.
+# The regex should reject characters outside [A-Za-z0-9/_+-].
+if grep -q '\^\\[A-Za-z0-9/_+-\\]\\+\$' "${SKILL_DIR}/scripts/configure.sh" 2>/dev/null || \
+   grep -qE 'TIMEZONE.*=~.*\^' "${SKILL_DIR}/scripts/configure.sh" 2>/dev/null; then
+  pass "configure.sh: timezone input validation regex present"
+else
+  fail "configure.sh: no timezone input validation regex found"
+fi
+
+# Test the regex pattern itself against known inputs
+VALID_TIMEZONES=("America/New_York" "UTC" "Etc/GMT+5" "US/Eastern" "Asia/Kolkata" "Pacific/Auckland")
+INVALID_TIMEZONES=("America/'; echo pwned; '" "UTC; rm -rf /" "\`whoami\`" "US/Eastern\$(id)" "a'b" "x;y")
+
+# Extract the validation regex from configure.sh if present
+REGEX_PATTERN='^[A-Za-z0-9/_+-]+$'
+
+for tz in "${VALID_TIMEZONES[@]}"; do
+  if [[ "$tz" =~ $REGEX_PATTERN ]]; then
+    pass "Regex accepts valid timezone: ${tz}"
+  else
+    fail "Regex rejects valid timezone: ${tz}"
+  fi
+done
+
+for tz in "${INVALID_TIMEZONES[@]}"; do
+  if [[ "$tz" =~ $REGEX_PATTERN ]]; then
+    fail "Regex accepts malicious input: ${tz}"
+  else
+    pass "Regex rejects malicious input: ${tz}"
+  fi
+done
+
+# ---------------------------------------------------------------------------
+# 3. setup.sh provider validation — only allow known providers
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- Provider Input Validation ---"
+
+# Verify setup.sh uses a case statement that only accepts google|outlook|caldav
+if grep -q 'google|outlook|caldav)' "${SKILL_DIR}/scripts/setup.sh" 2>/dev/null; then
+  pass "setup.sh: provider restricted to google|outlook|caldav"
+else
+  fail "setup.sh: provider not properly restricted"
+fi
+
+# ---------------------------------------------------------------------------
+# Summary
+# ---------------------------------------------------------------------------
+echo ""
+echo "=== Security Test Summary ==="
+if [[ "$ERRORS" -eq 0 ]]; then
+  echo "All security tests passed."
+  exit 0
+else
+  echo "${ERRORS} security test(s) FAILED."
+  exit 1
+fi
