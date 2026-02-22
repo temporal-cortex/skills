@@ -1,0 +1,85 @@
+# Release workflow — creates a GitHub Release when a v* tag is pushed.
+#
+# Trigger: push a version tag (e.g., git tag v0.3.2 && git push origin v0.3.2)
+#
+# Jobs:
+#   1. validate — run all CI checks (SKILL.md, scripts, JSON, links)
+#   2. release  — create GitHub Release with CHANGELOG summary
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Validate SKILL.md
+        run: bash tests/validate-skill.sh
+
+      - name: Validate structure
+        run: bash tests/validate-structure.sh
+
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: calendar-scheduling/scripts
+
+      - name: Validate JSON
+        run: |
+          for f in calendar-scheduling/assets/presets/*.json calendar-scheduling/.mcp.json; do
+            echo "Validating: $f"
+            python3 -c "import json; json.load(open('$f'))" || exit 1
+          done
+
+      - name: Check version consistency
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          SKILL_VERSION=$(grep -oP 'version:\s*"\K[^"]+' calendar-scheduling/SKILL.md)
+          if [ "$TAG_VERSION" != "$SKILL_VERSION" ]; then
+            echo "ERROR: Tag version ($TAG_VERSION) does not match SKILL.md metadata version ($SKILL_VERSION)"
+            exit 1
+          fi
+          echo "Version $TAG_VERSION matches SKILL.md"
+
+  release:
+    name: Create Release
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Extract changelog entry
+        id: changelog
+        run: |
+          # Extract the section for this version from CHANGELOG.md
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          BODY=$(awk "/^## \[$VERSION\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md)
+          # Write to file for gh release
+          echo "$BODY" > /tmp/release-notes.md
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          gh release create "$GITHUB_REF_NAME" \
+            --title "Agent Skill v${VERSION}" \
+            --notes-file /tmp/release-notes.md
