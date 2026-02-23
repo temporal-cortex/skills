@@ -169,7 +169,10 @@ This skill requires the Temporal Cortex MCP server. See [.mcp.json](.mcp.json) f
 
 Layer 1 tools (temporal context, datetime resolution, timezone conversion) work immediately with zero configuration. Calendar tools require a one-time OAuth setup — run the [setup script](scripts/setup.sh) or `npx @temporal-cortex/cortex-mcp auth google`.
 
-**Managed cloud** (for Open Scheduling, dashboard UI, multi-agent coordination):
+**Managed cloud** (no local setup required):
+
+For managed cloud mode, sign up at https://app.temporal-cortex.com to get a hosted MCP endpoint with Bearer token auth. Configure your client with the cloud URL instead of the local npx command -- all 11 tools work identically, with added support for Open Scheduling, dashboard UI, and multi-agent coordination.
+
 ```json
 {
   "mcpServers": {

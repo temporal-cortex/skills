@@ -4,6 +4,27 @@ set -euo pipefail
 
 PROVIDER="${1:-google}"
 
+# Cloud mode: print hosted MCP config and exit
+if [[ "$PROVIDER" == "--cloud" ]]; then
+  echo "=== Temporal Cortex Cloud Mode ==="
+  echo ""
+  echo "No local setup required. Sign up at https://app.temporal-cortex.com"
+  echo "to get your API key, then configure your MCP client:"
+  echo ""
+  echo '{'
+  echo '  "mcpServers": {'
+  echo '    "temporal-cortex": {'
+  echo '      "url": "https://mcp.temporal-cortex.com/mcp",'
+  echo '      "headers": { "Authorization": "Bearer YOUR_API_KEY" }'
+  echo '    }'
+  echo '  }'
+  echo '}'
+  echo ""
+  echo "Replace YOUR_API_KEY with the key from your dashboard."
+  echo "All 11 tools work identically in cloud mode."
+  exit 0
+fi
+
 echo "=== Temporal Cortex Calendar Setup ==="
 echo ""
 
@@ -33,11 +54,12 @@ case "$PROVIDER" in
     echo "ERROR: Unknown provider '${PROVIDER}'"
     echo "Supported providers: google, outlook, caldav"
     echo ""
-    echo "Usage: setup.sh [provider]"
+    echo "Usage: setup.sh [provider|--cloud]"
     echo "  setup.sh           # defaults to google"
     echo "  setup.sh google"
     echo "  setup.sh outlook"
     echo "  setup.sh caldav"
+    echo "  setup.sh --cloud   # print cloud mode config"
     exit 1
     ;;
 esac
