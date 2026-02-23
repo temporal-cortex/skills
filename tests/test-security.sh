@@ -113,6 +113,29 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# 4. NPX version pinning — setup.sh and .mcp.json must pin npm package version
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- NPX Version Pinning ---"
+
+# setup.sh must use pinned version (e.g., @temporal-cortex/cortex-mcp@0.3.5)
+if grep -q '@temporal-cortex/cortex-mcp@[0-9]' "${SKILL_DIR}/scripts/setup.sh" 2>/dev/null; then
+  pass "setup.sh: npx command has version pin"
+else
+  fail "setup.sh: npx command missing version pin"
+fi
+
+# .mcp.json must include OAuth credential env vars for scanner visibility
+MCP_JSON="${SKILL_DIR}/.mcp.json"
+for var in GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MICROSOFT_CLIENT_ID MICROSOFT_CLIENT_SECRET; do
+  if grep -q "\"${var}\"" "$MCP_JSON" 2>/dev/null; then
+    pass ".mcp.json: declares ${var} env hint"
+  else
+    fail ".mcp.json: missing ${var} env hint"
+  fi
+done
+
+# ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 echo ""

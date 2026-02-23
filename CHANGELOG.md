@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5] - 2026-02-23
+
+### Security
+- Pinned npm version in `setup.sh` (`@temporal-cortex/cortex-mcp@0.3.5`) for supply chain auditability
+- Added `-y` flag to `setup.sh` npx invocation for consistent non-interactive behavior
+- Added OAuth credential env var hints (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET`) to `.mcp.json` for scanner visibility
+
+### Changed
+- Added NPX version pinning and env var visibility assertions to `test-security.sh`
+
 ## [0.3.4] - 2026-02-23
 
 ### Security
@@ -57,7 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - .mcp.json for local MCP server connection
 - CI pipeline: SKILL.md validation, ShellCheck, JSON validation, link check
 
-[Unreleased]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.4...HEAD
+[Unreleased]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.5...HEAD
+[0.3.5]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.1...v0.3.2

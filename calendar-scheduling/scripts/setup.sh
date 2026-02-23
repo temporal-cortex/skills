@@ -48,7 +48,7 @@ echo "This will open your browser for calendar access consent."
 echo ""
 
 # Run the auth flow
-npx @temporal-cortex/cortex-mcp auth "$PROVIDER"
+npx -y @temporal-cortex/cortex-mcp@0.3.5 auth "$PROVIDER"
 
 # Verify credentials
 CONFIG_DIR="${HOME}/.config/temporal-cortex"
