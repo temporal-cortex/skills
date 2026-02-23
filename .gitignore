@@ -18,3 +18,9 @@ credentials.json
 *.key
 .env
 .env.*
+
+# Claude Code (personal config)
+CLAUDE.local.md
+.claude/CLAUDE.md
+.claude/settings.local.json
+.claude/*.local.json
