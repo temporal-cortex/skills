@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-02-25
+
+### Changed
+- Version alignment with MCP server v0.4.4 (server card endpoint for Smithery registry discovery)
+- Pinned MCP server version to `@temporal-cortex/cortex-mcp@0.4.4` in `.mcp.json` and `setup.sh`
+
 ## [0.4.3] - 2026-02-24
 
 ### Changed

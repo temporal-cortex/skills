@@ -2,7 +2,7 @@
   "mcpServers": {
     "temporal-cortex": {
       "command": "npx",
-      "args": ["-y", "@temporal-cortex/cortex-mcp@0.4.3"],
+      "args": ["-y", "@temporal-cortex/cortex-mcp@0.4.4"],
       "env": {
         "TIMEZONE": "",
         "WEEK_START": ""
