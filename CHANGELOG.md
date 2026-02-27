@@ -146,18 +146,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - .mcp.json for local MCP server connection
 - CI pipeline: SKILL.md validation, ShellCheck, JSON validation, link check
 
-[Unreleased]: https://github.com/billylui/temporal-cortex-skill/compare/v0.5.0...HEAD
-[0.5.0]: https://github.com/billylui/temporal-cortex-skill/compare/v0.4.5...v0.5.0
-[0.4.5]: https://github.com/billylui/temporal-cortex-skill/compare/v0.4.4...v0.4.5
-[0.4.4]: https://github.com/billylui/temporal-cortex-skill/compare/v0.4.3...v0.4.4
-[0.4.3]: https://github.com/billylui/temporal-cortex-skill/compare/v0.4.2...v0.4.3
-[0.4.2]: https://github.com/billylui/temporal-cortex-skill/compare/v0.4.1...v0.4.2
-[0.4.1]: https://github.com/billylui/temporal-cortex-skill/compare/v0.4.0...v0.4.1
-[0.4.0]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.6...v0.4.0
-[0.3.6]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.5...v0.3.6
-[0.3.5]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.4...v0.3.5
-[0.3.4]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.3...v0.3.4
-[0.3.3]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.1...v0.3.2
-[0.3.1]: https://github.com/billylui/temporal-cortex-skill/compare/v0.3.0...v0.3.1
-[0.3.0]: https://github.com/billylui/temporal-cortex-skill/releases/tag/v0.3.0
+[Unreleased]: https://github.com/temporal-cortex/skills/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/temporal-cortex/skills/compare/v0.4.5...v0.5.0
+[0.4.5]: https://github.com/temporal-cortex/skills/compare/v0.4.4...v0.4.5
+[0.4.4]: https://github.com/temporal-cortex/skills/compare/v0.4.3...v0.4.4
+[0.4.3]: https://github.com/temporal-cortex/skills/compare/v0.4.2...v0.4.3
+[0.4.2]: https://github.com/temporal-cortex/skills/compare/v0.4.1...v0.4.2
+[0.4.1]: https://github.com/temporal-cortex/skills/compare/v0.4.0...v0.4.1
+[0.4.0]: https://github.com/temporal-cortex/skills/compare/v0.3.6...v0.4.0
+[0.3.6]: https://github.com/temporal-cortex/skills/compare/v0.3.5...v0.3.6
+[0.3.5]: https://github.com/temporal-cortex/skills/compare/v0.3.4...v0.3.5
+[0.3.4]: https://github.com/temporal-cortex/skills/compare/v0.3.3...v0.3.4
+[0.3.3]: https://github.com/temporal-cortex/skills/compare/v0.3.2...v0.3.3
+[0.3.2]: https://github.com/temporal-cortex/skills/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/temporal-cortex/skills/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/temporal-cortex/skills/releases/tag/v0.3.0
