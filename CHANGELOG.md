@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **links**: Replaced 4 broken relative links in router SKILL.md with absolute GitHub URLs — cross-skill (`../temporal-cortex-datetime/SKILL.md`) and repo-level (`../../.mcp.json`, `../../scripts/setup.sh`) references now resolve correctly on ClawHub and other platforms that render skills in isolation
+- **version**: Fixed stale MCP server version in AGENTS.md (`0.5.2` → `0.5.3`)
+
 ## [0.5.3] - 2026-02-28
 
 ### Changed
