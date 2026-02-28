@@ -1,13 +1,13 @@
 ---
 name: temporal-cortex-datetime
 description: |-
-  Resolve natural language time expressions, convert timezones, compute durations, and adjust timestamps with DST awareness. Pure computation — no calendar API calls, no credentials required.
+  Convert timezones, resolve natural language times ("next Tuesday at 2pm"), compute durations, and adjust timestamps with DST awareness. Zero-setup — no API calls or credentials needed.
 license: MIT
 compatibility: |-
   Requires npx (Node.js 18+) for the MCP server. No OAuth or credentials needed — all tools are pure computation. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.
 metadata:
   author: temporal-cortex
-  version: "0.5.2"
+  version: "0.5.3"
   mcp-server: "@temporal-cortex/cortex-mcp"
   homepage: "https://temporal-cortex.com"
   repository: "https://github.com/temporal-cortex/skills"

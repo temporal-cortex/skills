@@ -16,8 +16,7 @@ echo "=== Validating Multi-Skill Directory Structure ==="
 SKILL_DIRS=(
   "skills/temporal-cortex"
   "skills/temporal-cortex-datetime"
-  "skills/temporal-cortex-calendars"
-  "skills/temporal-cortex-booking"
+  "skills/temporal-cortex-scheduling"
 )
 
 for dir in "${SKILL_DIRS[@]}"; do
@@ -62,10 +61,10 @@ done
 # 5. Reference documents in correct sub-skills
 REFERENCE_FILES=(
   "skills/temporal-cortex-datetime/references/DATETIME-TOOLS.md"
-  "skills/temporal-cortex-calendars/references/CALENDAR-TOOLS.md"
-  "skills/temporal-cortex-calendars/references/MULTI-CALENDAR.md"
-  "skills/temporal-cortex-calendars/references/RRULE-GUIDE.md"
-  "skills/temporal-cortex-booking/references/BOOKING-SAFETY.md"
+  "skills/temporal-cortex-scheduling/references/CALENDAR-TOOLS.md"
+  "skills/temporal-cortex-scheduling/references/MULTI-CALENDAR.md"
+  "skills/temporal-cortex-scheduling/references/RRULE-GUIDE.md"
+  "skills/temporal-cortex-scheduling/references/BOOKING-SAFETY.md"
 )
 
 for f in "${REFERENCE_FILES[@]}"; do

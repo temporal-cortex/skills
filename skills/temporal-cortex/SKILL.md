@@ -1,13 +1,13 @@
 ---
 name: temporal-cortex
 description: |-
-  AI calendar scheduling — routes to focused sub-skills for datetime resolution, calendar operations, and conflict-free booking. Start here to discover which skill handles your task.
+  Schedule meetings, check availability, and manage calendars across Google, Outlook, and CalDAV. Routes to focused sub-skills for datetime resolution and calendar scheduling.
 license: MIT
 compatibility: |-
   Requires npx (Node.js 18+) or Docker for the MCP server. python3 optional (configure/status scripts). Stores OAuth credentials at ~/.config/temporal-cortex/. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.
 metadata:
   author: temporal-cortex
-  version: "0.5.2"
+  version: "0.5.3"
   mcp-server: "@temporal-cortex/cortex-mcp"
   homepage: "https://temporal-cortex.com"
   repository: "https://github.com/temporal-cortex/skills"
@@ -32,18 +32,17 @@ This is the router skill for Temporal Cortex calendar operations. It routes your
 
 | Sub-Skill | When to Use | Tools |
 |-----------|------------|-------|
-| [temporal-cortex-datetime](../temporal-cortex-datetime/SKILL.md) | Time resolution, timezone conversion, duration math | 5 tools (Layer 1) |
-| [temporal-cortex-calendars](../temporal-cortex-calendars/SKILL.md) | List calendars, events, free slots, availability, RRULE expansion | 7 tools (Layers 0-3) |
-| [temporal-cortex-booking](../temporal-cortex-booking/SKILL.md) | Book a time slot with conflict prevention | 1 tool (Layer 4) |
+| [temporal-cortex-datetime](../temporal-cortex-datetime/SKILL.md) | Time resolution, timezone conversion, duration math. Zero-setup — no credentials needed. | 5 tools (Layer 1) |
+| [temporal-cortex-scheduling](../temporal-cortex-scheduling/SKILL.md) | List calendars, events, free slots, availability, RRULE expansion, and booking. Requires OAuth credentials. | 8 tools (Layers 0-4) |
 
 ## Routing Table
 
 | User Intent | Route To |
 |------------|----------|
 | "What time is it?", "Convert timezone", "How long until..." | **temporal-cortex-datetime** |
-| "Show my calendar", "Find free time", "Check availability", "Expand recurring rule" | **temporal-cortex-calendars** |
-| "Book a meeting", "Schedule an appointment" | **temporal-cortex-booking** |
-| "Schedule a meeting next Tuesday at 2pm" (full workflow) | **temporal-cortex-datetime** → **temporal-cortex-calendars** → **temporal-cortex-booking** |
+| "Show my calendar", "Find free time", "Check availability", "Expand recurring rule" | **temporal-cortex-scheduling** |
+| "Book a meeting", "Schedule an appointment" | **temporal-cortex-scheduling** |
+| "Schedule a meeting next Tuesday at 2pm" (full workflow) | **temporal-cortex-datetime** → **temporal-cortex-scheduling** |
 
 ## Core Workflow
 
@@ -63,11 +62,11 @@ Every calendar interaction follows this 5-step pattern:
 
 | Layer | Tools | Sub-Skill |
 |-------|-------|-----------|
-| 0 — Discovery | `list_calendars` | calendars |
+| 0 — Discovery | `list_calendars` | scheduling |
 | 1 — Temporal Context | `get_temporal_context`, `resolve_datetime`, `convert_timezone`, `compute_duration`, `adjust_timestamp` | datetime |
-| 2 — Calendar Ops | `list_events`, `find_free_slots`, `expand_rrule`, `check_availability` | calendars |
-| 3 — Availability | `get_availability` | calendars |
-| 4 — Booking | `book_slot` | booking |
+| 2 — Calendar Ops | `list_events`, `find_free_slots`, `expand_rrule`, `check_availability` | scheduling |
+| 3 — Availability | `get_availability` | scheduling |
+| 4 — Booking | `book_slot` | scheduling |
 
 ## MCP Server Connection
 

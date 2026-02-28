@@ -1,13 +1,13 @@
 ---
-name: temporal-cortex-calendars
+name: temporal-cortex-scheduling
 description: |-
-  List calendars, query events, find free slots, check availability across Google/Outlook/CalDAV, and expand RFC 5545 recurrence rules. Read-only calendar operations with TOON token compression and multi-calendar merging.
+  List events, find free slots, and book meetings across Google Calendar, Outlook, and CalDAV. Multi-calendar availability merging, recurring event expansion, and atomic booking with Two-Phase Commit conflict prevention.
 license: MIT
 compatibility: |-
   Requires npx (Node.js 18+) or Docker for the MCP server. Stores OAuth credentials at ~/.config/temporal-cortex/. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.
 metadata:
   author: temporal-cortex
-  version: "0.5.2"
+  version: "0.5.3"
   mcp-server: "@temporal-cortex/cortex-mcp"
   homepage: "https://temporal-cortex.com"
   repository: "https://github.com/temporal-cortex/skills"
@@ -23,9 +23,9 @@ metadata:
         - ~/.config/temporal-cortex/config.json
 ---
 
-# Calendar Operations & Availability
+# Calendar Scheduling & Booking
 
-7 read-only tools for calendar discovery, event querying, free slot finding, availability checking, and RRULE expansion. All tools are read-only and idempotent.
+8 tools for calendar discovery, event querying, free slot finding, availability checking, RRULE expansion, and atomic booking. 7 read-only tools + 1 write tool (`book_slot`).
 
 ## Tools
 
@@ -50,12 +50,50 @@ metadata:
 |------|------------|
 | `get_availability` | Merged free/busy view across multiple calendars. Pass `calendar_ids` array. Privacy: `"opaque"` (default, hides sources) or `"full"`. |
 
+### Layer 4 — Booking
+
+| Tool | When to Use |
+|------|------------|
+| `book_slot` | Book a time slot atomically. Lock → verify → write → release. **Always `check_availability` first.** |
+
 ## Critical Rules
 
 1. **Discover calendars first** — call `list_calendars` when you don't know which calendars are connected. Use the returned provider-prefixed IDs for all subsequent calls.
 2. **Use provider-prefixed IDs** for multi-calendar setups: `"google/primary"`, `"outlook/work"`, `"caldav/personal"`. Bare IDs (e.g., `"primary"`) route to the default provider.
 3. **TOON is the default format** — output uses TOON (~40% fewer tokens than JSON). Pass `format: "json"` only if you need structured parsing.
-4. **Timezone awareness** — all calendar tools accept RFC 3339 with timezone offsets. Never use bare dates.
+4. **Check before booking** — always call `check_availability` before `book_slot`. Never skip the conflict check.
+5. **Content safety** — event summaries and descriptions pass through a sanitization firewall before reaching the calendar API.
+6. **Timezone awareness** — all tools accept RFC 3339 with timezone offsets. Never use bare dates.
+
+## Full Booking Workflow
+
+```
+1. Discover  →  list_calendars
+2. Orient    →  get_temporal_context                      (temporal-cortex-datetime)
+3. Resolve   →  resolve_datetime("next Tuesday at 2pm")  (temporal-cortex-datetime)
+4. Check     →  check_availability(calendar_id, start, end)
+5. Book      →  book_slot(calendar_id, start, end, summary)
+```
+
+If the slot is busy at step 4, use `find_free_slots` to suggest alternatives.
+
+## Two-Phase Commit Protocol
+
+```
+Agent calls book_slot(calendar_id, start, end, summary)
+    │
+    ├─ 1. LOCK    →  Acquire exclusive lock on the time slot
+    │                 (in-memory local; Redis Redlock in Platform Mode)
+    │
+    ├─ 2. VERIFY  →  Check for overlapping events and active locks
+    │
+    ├─ 3. WRITE   →  Create event in calendar provider (Google/Outlook/CalDAV)
+    │                 Record event in shadow calendar
+    │
+    └─ 4. RELEASE →  Release the exclusive lock
+```
+
+If any step fails, the lock is released and the booking is aborted. No partial writes.
 
 ## Common Patterns
 
@@ -80,10 +118,12 @@ metadata:
    ) → merged free/busy blocks with source_count
 ```
 
-### Check a Specific Slot
+### Check and Book a Slot
 
 ```
-check_availability(calendar_id: "google/primary", start, end) → true/false
+1. check_availability(calendar_id: "google/primary", start, end) → true/false
+2. If free: book_slot(calendar_id: "google/primary", start, end, summary: "Team standup")
+3. If busy: find_free_slots(calendar_id, start, end, min_duration_minutes: 30)
 ```
 
 ### Expand Recurring Events
@@ -115,15 +155,28 @@ All calendar IDs use provider-prefixed format:
 | `"opaque"` (default) | Always `0` | Sharing availability externally |
 | `"full"` | Actual count | Internal use — shows which calendars are busy |
 
+## Tool Annotations (`book_slot`)
+
+| Property | Value | Meaning |
+|----------|-------|---------|
+| `readOnlyHint` | `false` | Creates calendar events |
+| `destructiveHint` | `false` | Never deletes or overwrites existing events |
+| `idempotentHint` | `false` | Calling twice creates two events |
+| `openWorldHint` | `true` | Makes external API calls |
+
 ## Error Handling
 
 | Error | Action |
 |-------|--------|
 | "No credentials found" | Run: `npx @temporal-cortex/cortex-mcp auth google` (or `outlook` / `caldav`). |
 | "Timezone not configured" | Prompt for IANA timezone. Or run the auth command which configures timezone. |
+| Slot is busy / conflict detected | Use `find_free_slots` to suggest alternatives. Present options to user. |
+| Lock acquisition failed | Another agent is booking the same slot. Wait briefly and retry, or suggest alternative times. |
+| Content rejected by sanitization | Rephrase the event summary/description. The firewall blocks prompt injection attempts. |
 
 ## Additional References
 
-- [Calendar Tools Reference](references/CALENDAR-TOOLS.md) — Complete input/output schemas for all 7 tools
+- [Calendar Tools Reference](references/CALENDAR-TOOLS.md) — Complete input/output schemas for all 8 tools
 - [Multi-Calendar Guide](references/MULTI-CALENDAR.md) — Provider routing, labels, privacy modes, cross-provider operations
 - [RRULE Guide](references/RRULE-GUIDE.md) — Recurrence rule patterns, DST edge cases, 5 LLM failure modes
+- [Booking Safety](references/BOOKING-SAFETY.md) — 2PC details, concurrent booking, lock TTL, content sanitization

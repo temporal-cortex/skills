@@ -1,0 +1,62 @@
+# Publish all skills to ClawHub when a version tag is pushed.
+# Can also be triggered manually for retries after transient failures.
+#
+# Trigger (auto): git tag v0.5.3 && git push origin v0.5.3
+# Trigger (manual): gh workflow run publish-clawhub.yml -f version=0.5.3
+
+name: Publish to ClawHub
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Skill version to publish (e.g. 0.5.3). Leave empty to use latest tag."
+        required: false
+        type: string
+
+jobs:
+  publish-clawhub:
+    name: Publish ${{ matrix.skill }} to ClawHub
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        skill:
+          - temporal-cortex
+          - temporal-cortex-datetime
+          - temporal-cortex-scheduling
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install ClawHub CLI
+        run: npm install -g clawhub
+
+      - name: Resolve version
+        id: version
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            echo "VERSION=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish ${{ matrix.skill }}
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          echo "Publishing ${{ matrix.skill }} v${VERSION} to ClawHub..."
+          clawhub publish skills/${{ matrix.skill }} \
+            --slug ${{ matrix.skill }} \
+            --name "${{ matrix.skill }}" \
+            --version "${VERSION}" \
+            --changelog "Release v${VERSION}"
+          echo "Published ${{ matrix.skill }} v${VERSION}"

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-02-28
+
+### Changed
+- **structure**: Merged `temporal-cortex-calendars` (7 tools) and `temporal-cortex-booking` (1 tool) into `temporal-cortex-scheduling` (8 tools) — split at the credential boundary (datetime = zero-setup vs scheduling = needs OAuth)
+- **structure**: Reduced from 4 skills (router + 3 sub-skills) to 3 skills (router + 2 sub-skills)
+- **descriptions**: AEO-optimized SKILL.md descriptions for all 3 skills — front-loaded searchable user intents within ~120 char truncation point
+- **ci**: Added `publish-clawhub.yml` workflow — auto-publishes all 3 skills to ClawHub on `v*` tags, manual retry via `workflow_dispatch`
+
 ## [0.5.2] - 2026-02-27
 
 ### Changed
@@ -159,7 +167,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - .mcp.json for local MCP server connection
 - CI pipeline: SKILL.md validation, ShellCheck, JSON validation, link check
 
-[Unreleased]: https://github.com/temporal-cortex/skills/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/temporal-cortex/skills/compare/v0.5.3...HEAD
+[0.5.3]: https://github.com/temporal-cortex/skills/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/temporal-cortex/skills/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/temporal-cortex/skills/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/temporal-cortex/skills/compare/v0.4.5...v0.5.0
