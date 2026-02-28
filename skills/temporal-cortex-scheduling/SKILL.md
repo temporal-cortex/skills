@@ -7,7 +7,7 @@ compatibility: |-
   Requires npx (Node.js 18+) or Docker for the MCP server. Stores OAuth credentials at ~/.config/temporal-cortex/. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.
 metadata:
   author: temporal-cortex
-  version: "0.5.3"
+  version: "0.5.4"
   mcp-server: "@temporal-cortex/cortex-mcp"
   homepage: "https://temporal-cortex.com"
   repository: "https://github.com/temporal-cortex/skills"
@@ -26,6 +26,17 @@ metadata:
 # Calendar Scheduling & Booking
 
 8 tools for calendar discovery, event querying, free slot finding, availability checking, RRULE expansion, and atomic booking. 7 read-only tools + 1 write tool (`book_slot`).
+
+## Runtime
+
+These tools run inside the [Temporal Cortex MCP server](https://github.com/temporal-cortex/mcp) (`@temporal-cortex/cortex-mcp@0.5.4`), a compiled Rust binary distributed as an npm package.
+
+**What happens at startup:**
+1. `npx` downloads `@temporal-cortex/cortex-mcp@0.5.4` from the npm registry (one-time, cached locally)
+2. The MCP server starts as a local process communicating over stdio
+3. Calendar tools make authenticated API calls to your configured providers (Google Calendar API, Microsoft Graph API, CalDAV endpoints)
+
+**Credential storage:** OAuth tokens stored locally at `~/.config/temporal-cortex/credentials.json`. No credentials are sent to Temporal Cortex servers unless you opt into Platform Mode.
 
 ## Tools
 
@@ -168,7 +179,7 @@ All calendar IDs use provider-prefixed format:
 
 | Error | Action |
 |-------|--------|
-| "No credentials found" | Run: `npx @temporal-cortex/cortex-mcp auth google` (or `outlook` / `caldav`). |
+| "No credentials found" | Run: `npx @temporal-cortex/cortex-mcp@0.5.4 auth google` (or `outlook` / `caldav`). |
 | "Timezone not configured" | Prompt for IANA timezone. Or run the auth command which configures timezone. |
 | Slot is busy / conflict detected | Use `find_free_slots` to suggest alternatives. Present options to user. |
 | Lock acquisition failed | Another agent is booking the same slot. Wait briefly and retry, or suggest alternative times. |

@@ -3,7 +3,7 @@
 [![CI](https://github.com/temporal-cortex/skills/actions/workflows/ci.yml/badge.svg)](https://github.com/temporal-cortex/skills/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**v0.5.3** · February 2026 · [Changelog](CHANGELOG.md) · **Website:** [temporal-cortex.com](https://temporal-cortex.com)
+**v0.5.4** · February 2026 · [Changelog](CHANGELOG.md) · **Website:** [temporal-cortex.com](https://temporal-cortex.com)
 
 Agent Skills for AI calendar scheduling using the [Temporal Cortex MCP server](https://github.com/temporal-cortex/mcp). Teaches AI agents the correct workflow for calendar discovery, temporal orientation, datetime resolution, multi-calendar availability merging, and conflict-free booking. Compatible with 26+ agent platforms.
 
@@ -12,7 +12,7 @@ Agent Skills for AI calendar scheduling using the [Temporal Cortex MCP server](h
 | Skill | Description | Tools |
 |-------|-------------|-------|
 | [temporal-cortex](skills/temporal-cortex/SKILL.md) | Router — routes calendar intents to sub-skills | All 12 |
-| [temporal-cortex-datetime](skills/temporal-cortex-datetime/SKILL.md) | Time resolution, timezone conversion, duration math (zero-setup) | 5 |
+| [temporal-cortex-datetime](skills/temporal-cortex-datetime/SKILL.md) | Time resolution, timezone conversion, duration math (no credentials needed) | 5 |
 | [temporal-cortex-scheduling](skills/temporal-cortex-scheduling/SKILL.md) | Calendar discovery, events, free slots, availability, RRULE, and atomic booking | 8 |
 
 ## Installation
@@ -37,7 +37,7 @@ All skills share one MCP server. The included [.mcp.json](.mcp.json) provides th
   "mcpServers": {
     "temporal-cortex": {
       "command": "npx",
-      "args": ["-y", "@temporal-cortex/cortex-mcp"]
+      "args": ["-y", "@temporal-cortex/cortex-mcp@0.5.4"]
     }
   }
 }
@@ -46,9 +46,9 @@ All skills share one MCP server. The included [.mcp.json](.mcp.json) provides th
 Layer 1 tools (temporal context, datetime resolution) work immediately. Calendar tools require a one-time OAuth setup:
 
 ```bash
-npx @temporal-cortex/cortex-mcp auth google     # Google Calendar
-npx @temporal-cortex/cortex-mcp auth outlook    # Microsoft Outlook
-npx @temporal-cortex/cortex-mcp auth caldav     # CalDAV (iCloud, Fastmail)
+npx @temporal-cortex/cortex-mcp@0.5.4 auth google     # Google Calendar
+npx @temporal-cortex/cortex-mcp@0.5.4 auth outlook    # Microsoft Outlook
+npx @temporal-cortex/cortex-mcp@0.5.4 auth caldav     # CalDAV (iCloud, Fastmail)
 ```
 
 ## Repository Structure
@@ -57,7 +57,7 @@ npx @temporal-cortex/cortex-mcp auth caldav     # CalDAV (iCloud, Fastmail)
 skills/
 ├── temporal-cortex/                  # Router skill
 │   └── SKILL.md
-├── temporal-cortex-datetime/         # Time & timezone tools (zero-setup)
+├── temporal-cortex-datetime/         # Time & timezone tools (no credentials needed)
 │   ├── SKILL.md
 │   └── references/DATETIME-TOOLS.md
 └── temporal-cortex-scheduling/       # Calendar ops + booking (needs OAuth)

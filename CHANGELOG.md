@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.4] - 2026-02-28
+
 ### Added
+- **runtime**: Added `## Runtime` transparency sections to all 3 SKILL.md files — explicitly documents MCP server download, stdio transport, and network/credential behavior to satisfy OpenClaw scanner INSTRUCTION SCOPE and INSTALL MECHANISM checks
+- **ci**: Added SKILL.md npx version pinning check to `test-security.sh` — prevents unpinned `npx @temporal-cortex/cortex-mcp` commands in SKILL.md bodies and reference docs
 - **listings**: Submitted all 3 skills to [anthropics/skills](https://github.com/anthropics/skills/pull/479) and [awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills/pull/281) directories — replaces stale single-skill PRs #451/#242 with multi-skill layout matching the `docx/pdf/pptx/xlsx` precedent
 
 ### Fixed
-- **links**: Replaced 4 broken relative links in router SKILL.md with absolute GitHub URLs — cross-skill (`../temporal-cortex-datetime/SKILL.md`) and repo-level (`../../.mcp.json`, `../../scripts/setup.sh`) references now resolve correctly on ClawHub and other platforms that render skills in isolation
+- **scanner**: Reworded "Zero-setup" to "No credentials needed" in datetime SKILL.md description and compatibility — resolves OpenClaw scanner PURPOSE contradiction flag (scanner interpreted "zero-setup" as "no runtime dependencies")
+- **scanner**: Pinned all 9 unpinned `npx @temporal-cortex/cortex-mcp` commands to `@0.5.4` across SKILL.md bodies, reference docs, and README — resolves INSTALL MECHANISM supply-chain flag
+- **links**: Replaced 4 broken relative links in router SKILL.md with absolute GitHub URLs — cross-skill and repo-level references now resolve correctly on ClawHub
 - **version**: Fixed stale MCP server version in AGENTS.md (`0.5.2` → `0.5.3`)
 
 ## [0.5.3] - 2026-02-28

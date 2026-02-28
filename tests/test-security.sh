@@ -124,6 +124,39 @@ for var in GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MICROSOFT_CLIENT_ID MICROSOFT_C
 done
 
 # ---------------------------------------------------------------------------
+# 4b. NPX version pinning in SKILL.md files and reference docs
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- NPX Version Pinning in SKILL.md ---"
+
+for skill_md in skills/*/SKILL.md skills/*/references/*.md README.md; do
+  if [[ ! -f "$skill_md" ]]; then
+    continue
+  fi
+
+  LABEL="$skill_md"
+
+  # Find any npx @temporal-cortex/cortex-mcp without @version (exclude mcp-server: metadata field)
+  UNPINNED=$(grep -n 'npx.*@temporal-cortex/cortex-mcp' "$skill_md" | grep -v '@temporal-cortex/cortex-mcp@[0-9]' | grep -v 'mcp-server:' || true)
+
+  if [[ -n "$UNPINNED" ]]; then
+    fail "${LABEL}: unpinned npx @temporal-cortex/cortex-mcp found"
+    echo "       ${UNPINNED}"
+  else
+    if grep -q 'npx.*@temporal-cortex/cortex-mcp' "$skill_md" 2>/dev/null; then
+      pass "${LABEL}: all npx commands have version pin"
+    fi
+  fi
+
+  # Check JSON code blocks for unpinned args (exclude mcp-server metadata field)
+  UNPINNED_JSON=$(grep -n '"@temporal-cortex/cortex-mcp"' "$skill_md" | grep -v 'mcp-server' || true)
+  if [[ -n "$UNPINNED_JSON" ]]; then
+    fail "${LABEL}: unpinned @temporal-cortex/cortex-mcp in JSON example"
+    echo "       ${UNPINNED_JSON}"
+  fi
+done
+
+# ---------------------------------------------------------------------------
 # 5. OpenClaw registry metadata — check all sub-skill SKILL.md files
 # ---------------------------------------------------------------------------
 echo ""
