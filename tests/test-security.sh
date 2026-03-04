@@ -286,6 +286,15 @@ else
   fail "Router SKILL.md: openclaw.requires.config missing credentials.json path"
 fi
 
+# Datetime must declare config.json (scanner flags metadata inconsistency otherwise)
+DATETIME_FM=$(sed -n '/^---$/,/^---$/p' "skills/temporal-cortex-datetime/SKILL.md" | sed '1d;$d')
+DATETIME_OPENCLAW=$(echo "$DATETIME_FM" | sed -n '/openclaw:/,/^[^ ]/p')
+if echo "$DATETIME_OPENCLAW" | grep -q 'config.json'; then
+  pass "Datetime SKILL.md: openclaw.requires.config includes config.json"
+else
+  fail "Datetime SKILL.md: openclaw.requires.config missing config.json (scanner flags metadata inconsistency)"
+fi
+
 if echo "$FRONTMATTER" | grep -qE '^\s+homepage:'; then
   pass "Router SKILL.md: metadata.homepage present"
 else
@@ -365,6 +374,27 @@ for skill_dir in skills/*/; do
     pass "${SKILL_NAME}: openclaw.install package version pinned"
   else
     fail "${SKILL_NAME}: openclaw.install package version not pinned"
+  fi
+done
+
+# ---------------------------------------------------------------------------
+# 9. Legacy metadata.requires guard — no JSON requires string in frontmatter
+# ---------------------------------------------------------------------------
+echo ""
+echo "--- Legacy metadata.requires Guard ---"
+
+for skill_dir in skills/*/; do
+  SKILL_FILE="${skill_dir}SKILL.md"
+  if [[ ! -f "$SKILL_FILE" ]]; then
+    continue
+  fi
+  SKILL_NAME=$(basename "$skill_dir")
+  FM=$(sed -n '/^---$/,/^---$/p' "$SKILL_FILE" | sed '1d;$d')
+
+  if echo "$FM" | grep -qE '^\s+requires:.*\{'; then
+    fail "${SKILL_NAME}: legacy metadata.requires JSON string found (use openclaw.requires instead)"
+  else
+    pass "${SKILL_NAME}: no legacy metadata.requires JSON string"
   fi
 done
 

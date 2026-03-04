@@ -7,15 +7,14 @@ compatibility: |-
   Requires npx (Node.js 18+) or Docker to install the MCP server binary. python3 optional (configure/status scripts). Stores OAuth credentials at ~/.config/temporal-cortex/. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.
 metadata:
   author: temporal-cortex
-  version: "0.6.0"
+  version: "0.6.1"
   mcp-server: "@temporal-cortex/cortex-mcp"
   homepage: "https://temporal-cortex.com"
   repository: "https://github.com/temporal-cortex/skills"
-  requires: '{"bins":["npx"],"optional_bins":["python3","docker"],"optional_env":["TIMEZONE","WEEK_START","HTTP_PORT","GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","MICROSOFT_CLIENT_ID","MICROSOFT_CLIENT_SECRET","GOOGLE_OAUTH_CREDENTIALS","TEMPORAL_CORTEX_TELEMETRY"],"credentials":["~/.config/temporal-cortex/credentials.json","~/.config/temporal-cortex/config.json"]}'
   openclaw:
     install:
       - kind: node
-        package: "@temporal-cortex/cortex-mcp@0.6.0"
+        package: "@temporal-cortex/cortex-mcp@0.6.1"
         bins: [cortex-mcp]
     requires:
       bins:
@@ -71,11 +70,11 @@ Every calendar interaction follows this 5-step pattern:
 
 ## MCP Server Connection
 
-All sub-skills share the [Temporal Cortex MCP server](https://github.com/temporal-cortex/mcp) (`@temporal-cortex/cortex-mcp@0.6.0`), a compiled Rust binary distributed as an npm package.
+All sub-skills share the [Temporal Cortex MCP server](https://github.com/temporal-cortex/mcp) (`@temporal-cortex/cortex-mcp@0.6.1`), a compiled Rust binary distributed as an npm package.
 
 **Install and startup lifecycle:**
-1. `npx` resolves `@temporal-cortex/cortex-mcp@0.6.0` from the npm registry (one-time, cached locally after first download)
-2. The postinstall script downloads the platform-specific binary from the [GitHub Release](https://github.com/temporal-cortex/mcp/releases/tag/mcp-v0.6.0) and verifies its SHA256 checksum against the embedded `checksums.json` — **installation halts on mismatch**
+1. `npx` resolves `@temporal-cortex/cortex-mcp@0.6.1` from the npm registry (one-time, cached locally after first download)
+2. The postinstall script downloads the platform-specific binary from the [GitHub Release](https://github.com/temporal-cortex/mcp/releases/tag/mcp-v0.6.1) and verifies its SHA256 checksum against the embedded `checksums.json` — **installation halts on mismatch**
 3. The MCP server starts as a local process communicating over stdio (no listening ports)
 4. Layer 1 tools (datetime) execute as pure local computation — no further network access
 5. Layer 2-4 tools (calendar) make authenticated API calls to your configured providers (Google, Outlook, CalDAV)
@@ -87,15 +86,15 @@ All sub-skills share the [Temporal Cortex MCP server](https://github.com/tempora
 **Network scope:** After the initial npm download, Layer 1 tools make zero network requests. Layer 2–4 tools connect only to your configured calendar providers (`googleapis.com`, `graph.microsoft.com`, or your CalDAV server). No callbacks to Temporal Cortex servers. Telemetry is off by default.
 
 **Pre-run verification** (recommended before first use):
-1. Inspect the npm package without executing: `npm pack @temporal-cortex/cortex-mcp@0.6.0 --dry-run`
-2. Verify checksums independently against the [GitHub Release](https://github.com/temporal-cortex/mcp/releases/download/mcp-v0.6.0/SHA256SUMS.txt) (see verification pipeline below)
+1. Inspect the npm package without executing: `npm pack @temporal-cortex/cortex-mcp@0.6.1 --dry-run`
+2. Verify checksums independently against the [GitHub Release](https://github.com/temporal-cortex/mcp/releases/download/mcp-v0.6.1/SHA256SUMS.txt) (see verification pipeline below)
 3. For full containment, run in Docker instead of npx (see Docker containment below)
 
-**Verification pipeline:** Checksums are published independently at each [GitHub Release](https://github.com/temporal-cortex/mcp/releases/tag/mcp-v0.6.0) as `SHA256SUMS.txt` — verify the binary before first use:
+**Verification pipeline:** Checksums are published independently at each [GitHub Release](https://github.com/temporal-cortex/mcp/releases/tag/mcp-v0.6.1) as `SHA256SUMS.txt` — verify the binary before first use:
 
 ```bash
 # 1. Fetch checksums from GitHub (independent of the npm package)
-curl -sL https://github.com/temporal-cortex/mcp/releases/download/mcp-v0.6.0/SHA256SUMS.txt
+curl -sL https://github.com/temporal-cortex/mcp/releases/download/mcp-v0.6.1/SHA256SUMS.txt
 
 # 2. Compare against the npm-installed binary
 shasum -a 256 "$(npm root -g)/@temporal-cortex/cortex-mcp/bin/cortex-mcp"
@@ -127,7 +126,7 @@ See [.mcp.json](https://github.com/temporal-cortex/skills/blob/main/.mcp.json) f
   "mcpServers": {
     "temporal-cortex": {
       "command": "npx",
-      "args": ["-y", "@temporal-cortex/cortex-mcp@0.6.0"]
+      "args": ["-y", "@temporal-cortex/cortex-mcp@0.6.1"]
     }
   }
 }
@@ -135,4 +134,4 @@ See [.mcp.json](https://github.com/temporal-cortex/skills/blob/main/.mcp.json) f
 
 For managed hosting (no local setup), see [Platform Mode](https://github.com/temporal-cortex/mcp#local-mode-vs-platform-mode) in the MCP repo.
 
-Layer 1 tools work immediately with zero configuration. Calendar tools require a one-time OAuth setup — run the [setup script](https://github.com/temporal-cortex/skills/blob/main/scripts/setup.sh) or `npx @temporal-cortex/cortex-mcp@0.6.0 auth google`.
+Layer 1 tools work immediately with zero configuration. Calendar tools require a one-time OAuth setup — run the [setup script](https://github.com/temporal-cortex/skills/blob/main/scripts/setup.sh) or `npx @temporal-cortex/cortex-mcp@0.6.1 auth google`.

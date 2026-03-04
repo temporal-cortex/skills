@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-03-04
+
+### Security
+- **scanner**: Removed legacy `metadata.requires` JSON string from router SKILL.md — contained OAuth client secrets as `optional_env` and a `credentials` key that competed with `openclaw.requires.config`, causing OpenClaw to flag CREDENTIALS and elevate INSTALL MECHANISM to warning level
+- **scanner**: Added `config.json` to datetime `openclaw.requires.config` — scanner flagged inconsistency between SKILL.md body ("reads config.json") and metadata (no declared config paths)
+
+### Added
+- **ci**: Added legacy `metadata.requires` guard (section 9) to `test-security.sh` — prevents reintroduction of JSON requires strings in SKILL.md frontmatter
+- **ci**: Added datetime config.json declaration check to `test-security.sh` section 6 — ensures `openclaw.requires.config` includes `config.json`
+
 ## [0.6.0] - 2026-03-03
 
 ### Security
@@ -246,6 +256,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI pipeline: SKILL.md validation, ShellCheck, JSON validation, link check
 
 [Unreleased]: https://github.com/temporal-cortex/skills/compare/v0.6.0...HEAD
+[0.6.1]: https://github.com/temporal-cortex/skills/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/temporal-cortex/skills/compare/v0.5.9...v0.6.0
 [0.5.9]: https://github.com/temporal-cortex/skills/compare/v0.5.8...v0.5.9
 [0.5.8]: https://github.com/temporal-cortex/skills/compare/v0.5.7...v0.5.8
