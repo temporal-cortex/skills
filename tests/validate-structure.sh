@@ -60,6 +60,7 @@ done
 
 # 5. Reference documents in correct sub-skills
 REFERENCE_FILES=(
+  "skills/temporal-cortex/references/SECURITY-MODEL.md"
   "skills/temporal-cortex-datetime/references/DATETIME-TOOLS.md"
   "skills/temporal-cortex-scheduling/references/CALENDAR-TOOLS.md"
   "skills/temporal-cortex-scheduling/references/MULTI-CALENDAR.md"

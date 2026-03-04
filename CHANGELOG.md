@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-03-04
+
+### Security
+- **scanner**: Removed inline npx JSON config from router SKILL.md — scanner parsed `"command": "npx"` JSON block as a direct execution instruction, elevating INSTALL MECHANISM to warning level. Scheduling (Benign) only shows Docker config inline.
+- **scanner**: Added `references/SECURITY-MODEL.md` to router skill — documents content sanitization firewall, filesystem containment, network scope per layer, and tool annotations. Scanner credits scheduling's `references/BOOKING-SAFETY.md` prompt injection firewall mention as a key positive signal.
+- **scanner**: Added "Safety Rules" section to router SKILL.md with content safety (prompt injection firewall) and conflict check rules — mirrors scheduling's "Critical Rules" pattern
+
+### Added
+- **router**: New `references/SECURITY-MODEL.md` reference document — content sanitization, filesystem containment, network scope, tool annotations, Two-Phase Commit safety
+
+### Changed
+- **router**: Default npx config now referenced via link instead of inline JSON block — reduces scanner instruction surface while keeping information accessible
+
 ## [0.6.1] - 2026-03-04
 
 ### Security
@@ -256,6 +269,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI pipeline: SKILL.md validation, ShellCheck, JSON validation, link check
 
 [Unreleased]: https://github.com/temporal-cortex/skills/compare/v0.6.0...HEAD
+[0.6.2]: https://github.com/temporal-cortex/skills/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/temporal-cortex/skills/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/temporal-cortex/skills/compare/v0.5.9...v0.6.0
 [0.5.9]: https://github.com/temporal-cortex/skills/compare/v0.5.8...v0.5.9
