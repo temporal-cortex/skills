@@ -95,16 +95,10 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 4. NPX version pinning — setup.sh and .mcp.json must pin npm package version
+# 4. .mcp.json env var hygiene — must declare TIMEZONE/WEEK_START, omit OAuth secrets
 # ---------------------------------------------------------------------------
 echo ""
-echo "--- NPX Version Pinning ---"
-
-if grep -q '@temporal-cortex/cortex-mcp@[0-9]' "scripts/setup.sh" 2>/dev/null; then
-  pass "setup.sh: npx command has version pin"
-else
-  fail "setup.sh: npx command missing version pin"
-fi
+echo "--- .mcp.json Env Var Hygiene ---"
 
 MCP_JSON=".mcp.json"
 for var in TIMEZONE WEEK_START; do
@@ -124,37 +118,10 @@ for var in GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MICROSOFT_CLIENT_ID MICROSOFT_C
 done
 
 # ---------------------------------------------------------------------------
-# 4b. NPX version pinning in SKILL.md files and reference docs
+# 4b. NPX version pinning policy — user-facing docs use latest (no pin),
+#     only openclaw.install.package frontmatter is pinned (checked in section 8)
 # ---------------------------------------------------------------------------
-echo ""
-echo "--- NPX Version Pinning in SKILL.md ---"
-
-for skill_md in skills/*/SKILL.md skills/*/references/*.md README.md; do
-  if [[ ! -f "$skill_md" ]]; then
-    continue
-  fi
-
-  LABEL="$skill_md"
-
-  # Find any npx @temporal-cortex/cortex-mcp without @version (exclude mcp-server: metadata field)
-  UNPINNED=$(grep -n 'npx.*@temporal-cortex/cortex-mcp' "$skill_md" | grep -v '@temporal-cortex/cortex-mcp@[0-9]' | grep -v 'mcp-server:' || true)
-
-  if [[ -n "$UNPINNED" ]]; then
-    fail "${LABEL}: unpinned npx @temporal-cortex/cortex-mcp found"
-    echo "       ${UNPINNED}"
-  else
-    if grep -q 'npx.*@temporal-cortex/cortex-mcp' "$skill_md" 2>/dev/null; then
-      pass "${LABEL}: all npx commands have version pin"
-    fi
-  fi
-
-  # Check JSON code blocks for unpinned args (exclude mcp-server metadata field)
-  UNPINNED_JSON=$(grep -n '"@temporal-cortex/cortex-mcp"' "$skill_md" | grep -v 'mcp-server' || true)
-  if [[ -n "$UNPINNED_JSON" ]]; then
-    fail "${LABEL}: unpinned @temporal-cortex/cortex-mcp in JSON example"
-    echo "       ${UNPINNED_JSON}"
-  fi
-done
+# No enforcement needed here — section 8 validates openclaw.install pinning
 
 # ---------------------------------------------------------------------------
 # 5. Security transparency — all SKILL.md files must document scope
