@@ -33,7 +33,7 @@ This is the router skill for Temporal Cortex calendar operations. It routes your
 | Sub-Skill | When to Use | Tools |
 |-----------|------------|-------|
 | [temporal-cortex-datetime](https://github.com/temporal-cortex/skills/blob/main/skills/temporal-cortex-datetime/SKILL.md) | Time resolution, timezone conversion, duration math. No credentials needed — works immediately. | 5 tools (Layer 1) |
-| [temporal-cortex-scheduling](https://github.com/temporal-cortex/skills/blob/main/skills/temporal-cortex-scheduling/SKILL.md) | List calendars, events, free slots, availability, RRULE expansion, and booking. Requires OAuth credentials. | 8 tools (Layers 0-4) |
+| [temporal-cortex-scheduling](https://github.com/temporal-cortex/skills/blob/main/skills/temporal-cortex-scheduling/SKILL.md) | List calendars, events, free slots, availability, RRULE expansion, and booking. Requires OAuth credentials. | 8 tools (Layers 2-4) |
 
 ## Routing Table
 
@@ -65,13 +65,12 @@ Every calendar interaction follows this 5-step pattern:
 3. **Content safety** — all event summaries and descriptions pass through a prompt injection firewall before reaching the calendar API
 4. **Timezone awareness** — never assume the current time. Use `get_temporal_context` first.
 
-## All 12 Tools (5 Layers)
+## All 12 Tools (4 Layers)
 
 | Layer | Tools | Sub-Skill |
 |-------|-------|-----------|
-| 0 — Discovery | `list_calendars` | scheduling |
 | 1 — Temporal Context | `get_temporal_context`, `resolve_datetime`, `convert_timezone`, `compute_duration`, `adjust_timestamp` | datetime |
-| 2 — Calendar Ops | `list_events`, `find_free_slots`, `expand_rrule`, `check_availability` | scheduling |
+| 2 — Calendar Ops | `list_calendars`, `list_events`, `find_free_slots`, `expand_rrule`, `check_availability` | scheduling |
 | 3 — Availability | `get_availability` | scheduling |
 | 4 — Booking | `book_slot` | scheduling |
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.5] - 2026-03-06
+
+### Fixed
+- **router**: Corrected layer count from "5 Layers (0–4)" to canonical "4 Layers (1–4)" — `list_calendars` belongs in Layer 2 (Calendar Operations), not a separate Layer 0
+- **scheduling**: Merged "Layer 0 — Discovery" section into "Layer 2 — Calendar Operations" to match canonical architecture
+
 ## [0.7.4] - 2026-03-05
 
 ### Changed

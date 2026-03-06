@@ -80,16 +80,11 @@ Build: `docker build -t cortex-mcp https://github.com/temporal-cortex/mcp.git`
 
 ## Tools
 
-### Layer 0 — Discovery
-
-| Tool | When to Use |
-|------|------------|
-| `list_calendars` | First call when calendars are unknown. Returns all connected calendars with provider-prefixed IDs, names, labels, primary status, and access roles. |
-
 ### Layer 2 — Calendar Operations
 
 | Tool | When to Use |
 |------|------------|
+| `list_calendars` | First call when calendars are unknown. Returns all connected calendars with provider-prefixed IDs, names, labels, primary status, and access roles. |
 | `list_events` | List events in a time range. TOON format by default (~40% fewer tokens than JSON). Use provider-prefixed IDs for multi-calendar: `"google/primary"`, `"outlook/work"`. |
 | `find_free_slots` | Find available gaps in a calendar. Set `min_duration_minutes` for minimum slot length. |
 | `expand_rrule` | Expand recurrence rules (RFC 5545) into concrete instances. Handles DST, BYSETPOS, EXDATE, leap years. Use `dtstart` as local datetime (no timezone suffix). |
